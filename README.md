@@ -133,7 +133,7 @@ npm start
 
  * -[x] Part 2: Design Phase (ERD & TDD)
 
- * -[ ] Part 3: Backend Core Development (In Progress)
+ * -[X] Part 3: Backend Core Development (In Progress)
 
  * -[ ] Part 4: Frontend & Randomizer Implementation
 
