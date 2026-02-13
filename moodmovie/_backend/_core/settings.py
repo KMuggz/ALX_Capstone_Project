@@ -24,6 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 load_dotenv()
 SECRET_KEY = os.getenv("key")
+
+TMDB_API_KEY = os.getenv("TMDB_API_KEY") # load key for use in services.py
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -39,8 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # 3rd party apps
     'rest_framework',
     'corsheaders',
+    # local apps
     'api',
 ]
 
@@ -56,6 +61,25 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = '_core.urls'
+
+# new: cors config - to allow reactframework to access the API
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000", # default create_react_app
+    "http://localhost:5173", # default vite
+    "http://127.0.0.1:3000", 
+    "http://127.0.0.1:5173",
+]
+
+# new: rest framework config 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    )
+} 
 
 TEMPLATES = [
     {
@@ -108,6 +132,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
+# internationalization
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -121,3 +147,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField' # for django 6.0+
