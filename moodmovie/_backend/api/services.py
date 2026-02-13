@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from django.conf import settings
 
 load_dotenv()
-TMDB_API_KEY = os.getenv("tmdb_key") 
+TMDB_API_KEY = settings.TMDB_API_KEY 
 BASE_URL = "https://api.themoviedb.org/3"
 
 def fetch_movies_by_mood(genre_ids):
