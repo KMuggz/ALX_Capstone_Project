@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme { 
+  --color-movie-dark: #0f172a;
+  --color-movie-gold: #fbbf24;
+}
+
+body {
+  background-color: var(--color-movie-dark);
+}
