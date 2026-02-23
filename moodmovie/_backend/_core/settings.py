@@ -62,12 +62,15 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = '_core.urls'
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 # new: cors config - to allow reactframework to access the API
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000", # default create_react_app
     "http://localhost:5173", # default vite
     "http://127.0.0.1:3000", 
     "http://127.0.0.1:5173",
+    "http://127.0.0.1:8800"
 ]
 
 # new: rest framework config 

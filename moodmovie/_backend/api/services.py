@@ -1,32 +1,55 @@
-import os
 import requests
-from dotenv import load_dotenv
+import logging
+import random
 from django.conf import settings
 
-load_dotenv()
-TMDB_API_KEY = settings.TMDB_API_KEY 
-BASE_URL = "https://api.themoviedb.org/3"
+# Set up logging to see errors in the console more clearly
+logger = logging.getLogger(__name__)
 
-def fetch_movies_by_mood(genre_ids):
+def get_tmdb_recommendations(genre_ids):
     """
-    Queries TMDb for movies matching specific genre IDs.
+    Unified service to fetch movies from TMDb.
+    Accepts genre_ids as a string (e.g., "35,18") or a list [35, 18].
     """
-    endpoint = f"{BASE_URL}/discover/movie"
+    api_key = settings.TMDB_API_KEY
+    endpoint = "https://api.themoviedb.org/3/discover/movie"
+    
+    # Scrutiny: Ensure genre_ids is formatted as a comma-separated string
+    if isinstance(genre_ids, list):
+        genre_ids = "|".join(map(str, genre_ids))
+    else:
+        genre_string = str(genre_ids)
+
     params = {
-        'api_key': TMDB_API_KEY,
-        'with_genres': ",".join(map(str, genre_ids)),
+        'api_key': api_key,
+        'with_genres': genre_ids,
         'sort_by': 'popularity.desc',
         'language': 'en-US',
-        'include_adult': False
+        'include_adult': False,
+        'page': random.randint(1, 5) # picks from top 100 films in each mood/genre
     }
-    
+
+    print(f"DEBUG: Requesting TMDb with genres: {genre_ids}")
+
     try:
-        response = requests.get(endpoint, params=params, timeout=5)
-        response.raise_for_status() # Check for HTTP errors
-        return response.json().get('results', [])
+        with requests.Session() as session:
+            session.trust_env = False 
+            response = session.get(endpoint, params=params, timeout=10)
+            
+            if response.status_code == 200:
+                return response.json()
+            else:
+                print(f"DEBUG: TMDb Error Status: {response.status_code}")
+                return None
+
+    except requests.exceptions.Timeout:
+        print("DEBUG: Request timed out in Python. System is reachable via curl but not via Requests.")
+        return None
     except requests.exceptions.RequestException as e:
-        print(f"Error connecting to TMDb: {e}")
-        return []
-    # added language and include_adult for cleaner data
-    # wrapped request in try-except for production-grade error handling
-    # added timeout to prevent the app from hanging when TMDb is slow
+        print(f"DEBUG: Connection error: {e}")
+        return None
+
+# Keep a reference for your existing view calls if you haven't renamed them yet
+def fetch_movies_by_mood(genre_ids):
+    data = get_tmdb_recommendations(genre_ids)
+    return data.get('results', []) if data else []

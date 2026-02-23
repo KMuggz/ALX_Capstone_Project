@@ -4,12 +4,12 @@ from .models import Mood, Movie, RecommendationCache, UserFeedback
 class MoodSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mood
-        fields = ['id', 'name', 'description']
+        fields = '__all__'
 
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
-        fields = ['tmdb_movie_id', 'title', 'poster_path', 'rating', 'summary']
+        fields = '__all__'
 
 class UserFeedbackSerializer(serializers.ModelSerializer):
     class Meta:
