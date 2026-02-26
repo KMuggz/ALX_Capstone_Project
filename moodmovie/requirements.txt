@@ -1,0 +1,18 @@
+# Core Framework
+django>=5.0
+djangorestframework
+django-environ
+
+# Database Drivers & Tools
+pymysql
+cryptography
+
+# Production & Deployment
+whitenoise[brotli]
+gunicorn
+
+# Security
+django-cors-headers
+
+# HTTP & External Communication
+requests
