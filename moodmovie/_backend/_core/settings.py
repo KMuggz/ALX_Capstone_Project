@@ -28,9 +28,13 @@ SECRET_KEY = os.getenv("key")
 TMDB_API_KEY = os.getenv("TMDB_API_KEY") # load key for use in services.py
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False # explicitly for production
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1', 
+    '.vercel.app',
+]
 
 
 # Application definition
@@ -45,6 +49,7 @@ INSTALLED_APPS = [
     # 3rd party apps
     'rest_framework',
     'corsheaders',
+    'whitenoise.runserver_nostatic', # for serving static files in production
     # local apps
     'api',
 ]
@@ -52,6 +57,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # handles CSS/JS on Heroku
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -62,7 +68,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = '_core.urls'
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False # for production security
 
 # new: cors config - to allow reactframework to access the API
 CORS_ALLOWED_ORIGINS = [
@@ -105,13 +111,25 @@ WSGI_APPLICATION = '_core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+#This is for the AVN setup: (password has to be the AVN password)
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('AVN_password'), # THIS IS THE AVN PASSWORD
+        'HOST': os.getenv('host'),
+        'PORT': os.getenv('port'),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'ssl': {
+                # Logic from your template: use file locally, system default on Vercel
+                'ca': os.path.join(BASE_DIR, 'ca.pem') if os.path.exists(os.path.join(BASE_DIR, 'ca.pem')) else None,
+            }
+        },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -150,4 +168,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles' # required for Heroku collectstatic
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField' # for django 6.0+
