@@ -1,0 +1,16 @@
+[build]
+  # This matches the standard Vite build command
+  command = "npm run build"
+  # Vite outputs the production build to the 'dist' folder
+  publish = "dist"
+
+[[redirects]]
+  # This handles the SPA 404 issue. 
+  # It tells Netlify to send all traffic to index.html so React can take over.
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build.environment]
+  # Ensures the build uses a modern Node version
+  NODE_VERSION = "20"
