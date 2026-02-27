@@ -1,0 +1,12 @@
+[build]
+  command = "pip install -r requirements.txt"
+  functions = "functions"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/wsgi"
+  status = 200
+
+[functions]
+  external_node_modules = []
+  included_files = ["_core/**", "api/**", "manage.py"]

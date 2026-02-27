@@ -4,12 +4,13 @@ djangorestframework
 django-environ
 
 # Database Drivers & Tools
-pymysql
+PyMySQL
 cryptography
 
 # Production & Deployment
 whitenoise[brotli]
 gunicorn
+serverless_wsgi
 
 # Security
 django-cors-headers
