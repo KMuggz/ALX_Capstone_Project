@@ -6,7 +6,12 @@ from .models import Mood, UserFeedback
 from .serializers import MoodSerializer 
 from .services import get_tmdb_recommendations
 import random
+#for debugging only
+import traceback
+import logging
 
+
+logger = logging.getLogger(__name__)
 class RecommendMovie(APIView):
     def get(self, request):
         mood_id = request.query_params.get('mood_id')
@@ -54,6 +59,9 @@ class RecommendMovie(APIView):
                 
                 random_movie = random.choice(available_movies)
                 return Response({
+                # --- CHANGE: ADDED 'id' TO THE RESPONSE ---
+                # Without this, the Good/Bad buttons can't identify the movie
+                    "id": random_movie.get("id"),
                     "title": random_movie.get("title"),
                     "overview": random_movie.get("overview"),
                     "poster_path": random_movie.get("poster_path"),
@@ -70,8 +78,16 @@ class RecommendMovie(APIView):
             
         except Mood.DoesNotExist:
             return Response({"error": "Mood not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # --- CHANGE: ENHANCED ERROR CATCHING ---
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print("\n--- DjangoBackend Error Traceback---")
+            traceback.print_exc()
+            print("--------------------------------------------------------------\n")
+            return Response({
+                "error": str(e),
+                "detail": "Check the Django terminal for the full traceback"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # NEW ENDPOINT: Handles the POST request from the Good/Bad/Meh buttons
 class PostFeedback(APIView):
