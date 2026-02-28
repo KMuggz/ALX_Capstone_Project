@@ -41,7 +41,7 @@ class RecommendMovie(APIView):
                 blacklisted_ids = set(
                     UserFeedback.objects.filter(
                     session_id=session_id, 
-                    status='Bad'
+                    feedback_type='Bad'
                 ).values_list('movie_id', flat=True)
                 )
 
@@ -106,7 +106,7 @@ class PostFeedback(APIView):
         UserFeedback.objects.update_or_create(
             movie_id=movie_id,
             session_id=session_id,
-            defaults={'status': status_val}
+            defaults={'feedback_type': status_val}
         )
         
         return Response({"message": "Feedback recorded"}, status=status.HTTP_201_CREATED)
