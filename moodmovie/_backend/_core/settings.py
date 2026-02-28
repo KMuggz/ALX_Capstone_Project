@@ -113,21 +113,29 @@ WSGI_APPLICATION = '_core.wsgi.application'
 
 #This is for the AVN setup: (password has to be the AVN password)
 
-DATABASES = {
+if os.getenv('DATABASE_URL'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.getenv('DB_NAME'),
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('AVN_password'), # THIS IS THE AVN PASSWORD
+            'HOST': os.getenv('host'),
+            'PORT': os.getenv('port'),
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+                'ssl': {
+                    # Logic from your template: use file locally, system default on Vercel
+                    'ca': os.path.join(BASE_DIR, 'ca.pem') if os.path.exists(os.path.join(BASE_DIR, 'ca.pem')) else None,
+                }
+            },
+        }
+    }
+else:
+    DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('AVN_password'), # THIS IS THE AVN PASSWORD
-        'HOST': os.getenv('host'),
-        'PORT': os.getenv('port'),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            'ssl': {
-                # Logic from your template: use file locally, system default on Vercel
-                'ca': os.path.join(BASE_DIR, 'ca.pem') if os.path.exists(os.path.join(BASE_DIR, 'ca.pem')) else None,
-            }
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
