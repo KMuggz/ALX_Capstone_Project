@@ -69,6 +69,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = '_core.urls'
 
 CORS_ALLOW_ALL_ORIGINS = False # for production security
+CORS_ALLOW_CREDENTIALS = True # this allows Django to send required header so browser doesnt kill the connection
 
 # new: cors config - to allow reactframework to access the API
 CORS_ALLOWED_ORIGINS = [
@@ -176,7 +177,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles' # required for Heroku collectstatic
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField' # for django 6.0+
 
