@@ -41,7 +41,7 @@ Direct integration with TMDb Watch Providers. Every movie card includes a "Where
 
    * SQLite (Development)
 
-   * PostgreSQL (Production-ready)
+   * ~~PostgreSQL~~ MySQL (Production-ready)
 
 ### External API
 
@@ -59,6 +59,8 @@ Stores emotional categories and their corresponding TMDb API query parameters (G
 **Movie**
 
 The central source of truth for movie metadata fetched from TMDb, includes...
+* Id
+
 * Title
 
 * Poster
